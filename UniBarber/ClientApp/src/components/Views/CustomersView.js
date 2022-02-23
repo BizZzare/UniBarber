@@ -1,13 +1,14 @@
 import React, { Component } from 'react';
 import { DataGrid } from '@mui/x-data-grid';
-import { getCustomers } from '../../services/Api';
+import { addCustomer, getCustomers } from '../../services/Api';
 
 export class CustomersView extends Component {
 
     constructor(props) {
         super(props);
         this.state = {
-            customers: null, addingUserView: false,
+            customers: null,
+            addingUserView: false,
             nameValue: "",
             lastnameValue: "",
             phoneValue: "",
@@ -25,9 +26,31 @@ export class CustomersView extends Component {
     handleAddUserClick() {
         this.setState({ ...this.state, addingUserView: true });
     }
-    handleSubmit(event) {
-        alert('Отправленное имя: ' + this.state.value);
+    async handleSubmitAdding(event) {
+        let customer = {
+            name: this.state.nameValue,
+            lastname: this.state.lastnameValue,
+            phone: this.state.phoneValue,
+            sex: parseInt(this.state.sexValue)
+        }
+
         event.preventDefault();
+
+
+        let customers = await addCustomer(customer);
+
+
+
+        this.setState({
+            ...this.state,
+            addingUserView: false,
+            customers: customers,
+            nameValue: "",
+            lastnameValue: "",
+            phoneValue: "",
+            sexValue: 0
+        });
+
     }
 
     handleNameChange(event) {
@@ -47,10 +70,8 @@ export class CustomersView extends Component {
     }
 
     async componentDidMount() {
-        if (!this.state.customers) {
             let customers = await getCustomers();
             this.setState({ ...this.state, customers: customers })
-        }
     }
 
 
@@ -61,22 +82,31 @@ export class CustomersView extends Component {
 
         if (this.state.addingUserView) {
             return <div>
-                <div>
-                    Name
-                    <input type="text" />
-                </div>
-                <div>
-                    Lastname
-                    <input type="text" />
-                </div>
-
-                <form onSubmit={this.handleSubmit}>
+                <form onSubmit={this.handleSubmitAdding}>
                     <label>
                         Name:
                         <input type="text" value={this.state.nameValue} onChange={this.handleNameChange} />
                     </label>
+                    <label>
+                        Lastname:
+                        <input type="text" value={this.state.lastnameValue} onChange={this.handleLastnameChange} />
+                    </label>
+                    <label>
+                        Phone:
+                        <input type="text" value={this.state.phoneValue} onChange={this.handlePhoneChange} />
+                    </label>
+                    <label>
+                        Sex:
+                        <div onChange={this.handleSexChange}>
+                            <input type="radio" value="0" name="sex" /> Male
+                            <input type="radio" value="1" name="sex" /> Female
+                        </div>
+                    </label>
                     <input type="submit" value="Add" />
                 </form>
+
+                <button onClick={() => this.setState({ ...this.state, addingUserView: false })}>Cancel</button>
+
             </div>
         }
 
@@ -102,7 +132,7 @@ export class CustomersView extends Component {
                 <DataGrid rows={rows} columns={columns} />
             </div>
 
-            <button onClick={ }>Add Customer</button>
+            <button onClick={() => this.handleAddUserClick()}>Add Customer</button>
 
             <br />
             <button onClick={() => this.props.clearViewSelection()}>back</button>

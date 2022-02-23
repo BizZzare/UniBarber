@@ -45,9 +45,9 @@ export class MainView extends Component {
                 case "service":
                     return <ServiceView clearViewSelection={this.clearViewSelection} />;
                 case "visit":
-                    return <AddVisitView clearViewSelection={this.clearViewSelection} />;
+                    return <AddVisitView branchId={this.props.branchId} clearViewSelection={this.clearViewSelection} />;
                 case "statistics":
-                    return <StatisticsView clearViewSelection={this.clearViewSelection} />;
+                    return <StatisticsView branchId={this.props.branchId} clearViewSelection={this.clearViewSelection} />;
             }
         }
 

@@ -51,30 +51,30 @@ namespace UniBarber.Controllers
         }
 
         [HttpGet]
-        [Route("api/{branchId}/visits/statistics")]
+        [Route("statistics/{branchId}")]
         public IEnumerable<StatisticsInfo> GetStatisticsOnBranch(string branchId)
         {
             var customers = _customersRep.Get();
             var services = _serviceRep.Get();
-            var visits = _visitsRep.Get().Where(visits => visits.BranchId == Guid.Parse(branchId));
+            var visits = _visitsRep.Get().Where(visits => visits.BranchId == Guid.Parse(branchId)).Select(visit => visit);
 
             var statistics = new List<StatisticsInfo>();
 
             foreach (var customer in customers)
             {
                 var customersVisits = visits.Where(visit => visit.CustomerId == customer.Id);
-                var customersLastServiceId = customersVisits.Last().ServiceId;
-
-                statistics.Add(new StatisticsInfo
-                {
-                    Name = $"{customer.Name} {customer.Lastname}",
-                    Phone = customer.Phone,
-                    DiscountPercentage = customer.DiscountPercentage,
-                    Sex = customer.Sex,
-                    VisitsCount = customersVisits.Count(),
-                    Service = services.First(service => service.Id == customersLastServiceId).Name,
-                    Sum = visits.Sum(visit => visit.Price)
-                });
+                var customersLastServiceId = customersVisits.LastOrDefault()?.ServiceId;
+                if (customersLastServiceId is not null)
+                    statistics.Add(new StatisticsInfo
+                    {
+                        Name = $"{customer.Name} {customer.Lastname}",
+                        Phone = customer.Phone,
+                        DiscountPercentage = customer.DiscountPercentage,
+                        Sex = customer.Sex,
+                        VisitsCount = customersVisits.Count(),
+                        Service = services.First(service => service.Id == customersLastServiceId).Name,
+                        Sum = visits.Sum(visit => visit.Price)
+                    });
             }
 
             return statistics;

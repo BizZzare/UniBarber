@@ -41,7 +41,7 @@ export class Home extends Component {
           </div>
         )
       }
-      return (<MainView selectedBranch={this.state.selectedBranch} clearBranchSelection={this.clearBranchSelection} />)
+      return (<MainView branchId={this.state.selectedBranch} clearBranchSelection={this.clearBranchSelection} />)
     }
     return (
       <div>

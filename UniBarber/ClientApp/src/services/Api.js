@@ -11,7 +11,7 @@ export const getService = () =>
     processRequest(`/service`);
 
 export const getStatistics = (branchId) => 
-    processRequest(`/${branchId}/visits/statistics`);
+    processRequest(`/visits/statistics/${branchId}`);
 
 
 
