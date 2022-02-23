@@ -4,7 +4,6 @@ import { getBranches } from '../services/Api';
 import { MainView } from './MainView';
 
 export class Home extends Component {
-  static displayName = Home.name;
 
   constructor(props) {
     super(props);
@@ -13,12 +12,18 @@ export class Home extends Component {
       branches: null
     };
 
+    this.clearBranchSelection = this.clearBranchSelection.bind(this);
   }
 
+  clearBranchSelection() {
+    this.setState({ ...this.state, selectedBranch: null });
+  }
 
   async componentDidMount() {
-    var branches = await getBranches();
-    this.setState({ ...this.state, branches: branches })
+    if (!this.state.branches) {
+      let branches = await getBranches();
+      this.setState({ ...this.state, branches: branches })
+    }
   }
 
   render() {
@@ -29,14 +34,14 @@ export class Home extends Component {
         return (
           <div>
             {branches.map(branch => {
-              return <button onClick={() => 
+              return <button onClick={() =>
                 this.setState({ ...this.state, selectedBranch: branch.id })
               }>{branch.name}</button>
             })}
           </div>
         )
       }
-      return (<MainView />)
+      return (<MainView selectedBranch={this.state.selectedBranch} clearBranchSelection={this.clearBranchSelection} />)
     }
     return (
       <div>
