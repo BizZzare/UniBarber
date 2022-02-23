@@ -79,8 +79,6 @@ export class AddVisitView extends Component {
         const customerNames = this.state.customers.map(customer => { return { value: customer.id, label: `${customer.name} ${customer.lastname}` } });
         const serviceNames = this.state.service.map(service => { return { value: service.id, label: service.name } });
 
-        console.log(customerNames, serviceNames)
-
         const calcultationResult = this.tryCalculatePrice();
         
         return <div>

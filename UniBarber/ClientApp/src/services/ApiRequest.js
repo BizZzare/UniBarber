@@ -19,8 +19,6 @@ export default function processRequest(url = '', method = 'GET', data = {}) {
       'Content-Type': 'application/json',
     }
 
-    console.log(url, method);
-
     return axios({
       method,
       data: JSON.stringify(data),
